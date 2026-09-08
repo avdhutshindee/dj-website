@@ -1,803 +1,951 @@
-const API_BASE = "https://dj-website-backend.onrender.com";
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
+const Database = require("better-sqlite3");
+const crypto = require("crypto");
 
-document.addEventListener("DOMContentLoaded", () => {
-
-  loadSongs();
-
-  setupNavigation();
-
-  setupBooking();
-
-  setupSongUpdates();
-
-});
+const app = express();
+const PORT = process.env.PORT || 5000;
 
 
-/* ==========================================
-   LOAD SONGS
-   ========================================== */
+// =====================================
+// DATABASE
+// =====================================
 
-let isLoadingSongs = false;
+const db = new Database("dj_website.db");
 
-async function loadSongs() {
+const schema = fs.readFileSync("schema.sql", "utf8");
 
-  const container =
-    document.getElementById("track-list");
+db.exec(schema);
 
-  if (!container) {
-    console.error("track-list not found");
-    return;
-  }
 
-  if (isLoadingSongs) {
-    return;
-  }
-
-  isLoadingSongs = true;
-
-  try {
-
-    const response =
-      await fetch(
-        `${API_BASE}/api/songs`,
-        {
-          method: "GET",
-          cache: "no-store"
-        }
-      );
-
-    console.log(
-      "Songs API status:",
-      response.status
+// =====================================
+// MIDDLEWARE
+// =====================================
+app.use((req, res, next) => {
+    res.header(
+        "Access-Control-Allow-Origin",
+        "https://deejaysourabh.netlify.app"
     );
 
-    if (!response.ok) {
+    res.header(
+        "Access-Control-Allow-Methods",
+        "GET,POST,DELETE,OPTIONS"
+    );
 
-      throw new Error(
-        "API returned " + response.status
-      );
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization"
+    );
 
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(204);
     }
 
-    const songs =
-      await response.json();
+    next();
+});
+app.use(express.json());
 
-    console.log(
-      "Songs received:",
-      songs
-    );
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+);
 
-    container.innerHTML = "";
+
+// =====================================
+// ADMIN AUTHENTICATION
+// =====================================
+
+const adminTokens = new Set();
+
+
+// =====================================
+// ADMIN LOGIN
+// =====================================
+
+app.post(
+    "/api/admin/login",
+    (req, res) => {
+
+        try {
+
+            const {
+                username,
+                password
+            } = req.body;
+
+
+            // =====================================
+            // ADMIN USERNAME & PASSWORD
+            // =====================================
+
+           const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+if (
+    username === ADMIN_USERNAME &&
+    password === ADMIN_PASSWORD
+) {
+
+                const token =
+                    crypto
+                        .randomBytes(32)
+                        .toString("hex");
+
+
+                adminTokens.add(token);
+
+
+                return res.json({
+
+                    success: true,
+
+                    message:
+                        "Login successful",
+
+                    token:
+                        token
+
+                });
+
+            }
+
+
+            res.status(401).json({
+
+                success: false,
+
+                message:
+                    "Invalid username or password"
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "LOGIN ERROR:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Login failed"
+
+            });
+
+        }
+
+    }
+);
+
+
+// =====================================
+// CHECK ADMIN TOKEN
+// =====================================
+
+function requireAdmin(
+    req,
+    res,
+    next
+) {
+
+    const authorization =
+        req.headers.authorization || "";
+
+
+    const token =
+        authorization.startsWith("Bearer ")
+            ? authorization.substring(7)
+            : "";
+
 
     if (
-      !Array.isArray(songs) ||
-      songs.length === 0
+        !token ||
+        !adminTokens.has(token)
     ) {
 
-      container.innerHTML = `
-        <div class="songs-empty">
-          <div class="empty-icon">🎵</div>
-          <div>No songs available yet.</div>
-        </div>
-      `;
+        return res.status(401).json({
 
-      return;
-    }
+            success: false,
 
+            message:
+                "Admin authentication required"
 
-    songs.forEach(song => {
-
-      createSongCard(
-        container,
-        song
-      );
-
-    });
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "SONG LOAD ERROR:",
-      error
-    );
-
-    container.innerHTML = `
-      <div class="songs-error">
-        <div class="error-icon">⚠</div>
-        <div>Unable to load songs.</div>
-        <small>
-          Please refresh the page.
-        </small>
-      </div>
-    `;
-
-  }
-
-  finally {
-
-    isLoadingSongs = false;
-
-  }
-
-}
-
-
-/* ==========================================
-   CREATE SONG CARD
-   ========================================== */
-
-function createSongCard(
-  container,
-  song
-) {
-
-  const card =
-    document.createElement("div");
-
-  card.className =
-    "song-card";
-
-
-  /* ----------------------------------------
-     COVER
-     ---------------------------------------- */
-
-  const coverWrapper =
-    document.createElement("div");
-
-  coverWrapper.className =
-    "song-cover-wrapper";
-
-
-  if (song.cover_image) {
-
-    const cover =
-      document.createElement("img");
-
-    cover.className =
-      "song-cover";
-
-    cover.src =
-      getBackendUrl(song.cover_image);
-
-    cover.alt =
-      (song.title || "Song") + " cover";
-
-    cover.loading =
-      "lazy";
-
-    coverWrapper.appendChild(
-      cover
-    );
-
-  }
-
-  else {
-
-    coverWrapper.innerHTML = `
-      <div class="song-cover-placeholder">
-        🎵
-      </div>
-    `;
-
-  }
-
-
-  /* ----------------------------------------
-     SONG DETAILS
-     ---------------------------------------- */
-
-  const details =
-    document.createElement("div");
-
-  details.className =
-    "song-details";
-
-
-  const title =
-    document.createElement("div");
-
-  title.className =
-    "song-title";
-
-  title.textContent =
-    song.title || "Untitled Song";
-
-
-  const genre =
-    document.createElement("div");
-
-  genre.className =
-    "song-genre";
-
-  genre.textContent =
-    song.genre || "DJ Sourabh";
-
-
-  details.appendChild(
-    title
-  );
-
-  details.appendChild(
-    genre
-  );
-
-
-  /* ----------------------------------------
-     PLAY BUTTON
-     ---------------------------------------- */
-
-  const playButton =
-    document.createElement("button");
-
-  playButton.type =
-    "button";
-
-  playButton.className =
-    "song-play-button";
-
-  playButton.innerHTML = `
-    <span class="play-icon">▶</span>
-    <span>PLAY</span>
-  `;
-
-
-  playButton.addEventListener(
-    "click",
-    () => {
-
-      playTrack(
-        song.title,
-        song.audio_file
-      );
+        });
 
     }
-  );
 
 
-  /* ----------------------------------------
-     CARD ASSEMBLY
-     ---------------------------------------- */
-
-  card.appendChild(
-    coverWrapper
-  );
-
-  card.appendChild(
-    details
-  );
-
-  card.appendChild(
-    playButton
-  );
-
-  container.appendChild(
-    card
-  );
+    next();
 
 }
 
 
-/* ==========================================
-   BACKEND URL
-   ========================================== */
+// =====================================
+// ADMIN LOGOUT
+// =====================================
 
-function getBackendUrl(filePath) {
+app.post(
+    "/api/admin/logout",
+    requireAdmin,
+    (req, res) => {
 
-  if (!filePath) {
-    return "";
-  }
+        const authorization =
+            req.headers.authorization || "";
 
-  if (
-    filePath.startsWith("http://") ||
-    filePath.startsWith("https://")
-  ) {
 
-    return filePath;
+        const token =
+            authorization.startsWith("Bearer ")
+                ? authorization.substring(7)
+                : "";
 
-  }
 
-  return API_BASE + filePath;
+        adminTokens.delete(token);
 
-}
 
+        res.json({
 
-/* ==========================================
-   PLAY SONG
-   ========================================== */
+            success: true,
 
-function playTrack(
-  title,
-  audioSrc
-) {
+            message:
+                "Logged out successfully"
 
-  const audio =
-    document.getElementById(
-      "audio-element"
-    );
-
-  const player =
-    document.getElementById(
-      "player-bar"
-    );
-
-  const playingTitle =
-    document.getElementById(
-      "playing-title"
-    );
-
-
-  if (!audio) {
-
-    console.error(
-      "Audio element not found"
-    );
-
-    return;
-
-  }
-
-
-  if (!audioSrc) {
-
-    console.error(
-      "Audio file missing"
-    );
-
-    return;
-
-  }
-
-
-  if (playingTitle) {
-
-    playingTitle.textContent =
-      title || "Playing Track";
-
-  }
-
-
-  audio.src =
-    getBackendUrl(audioSrc);
-
-  audio.load();
-
-
-  if (player) {
-
-    player.classList.remove(
-      "hidden"
-    );
-
-  }
-
-
-  audio.play()
-    .catch(error => {
-
-      console.error(
-        "Audio playback error:",
-        error
-      );
-
-    });
-
-}
-
-
-/* ==========================================
-   NAVIGATION
-   ========================================== */
-
-function setupNavigation() {
-
-  const sidebar =
-    document.getElementById(
-      "sidebar"
-    );
-
-  const overlay =
-    document.getElementById(
-      "sidebar-overlay"
-    );
-
-  const menuButton =
-    document.getElementById(
-      "menu-toggle"
-    );
-
-  const closeButton =
-    document.getElementById(
-      "close-sidebar"
-    );
-
-  const navItems =
-    document.querySelectorAll(
-      ".nav-item"
-    );
-
-
-  function openMenu() {
-
-    sidebar?.classList.remove(
-      "hidden"
-    );
-
-    overlay?.classList.remove(
-      "hidden"
-    );
-
-  }
-
-
-  function closeMenu() {
-
-    sidebar?.classList.add(
-      "hidden"
-    );
-
-    overlay?.classList.add(
-      "hidden"
-    );
-
-  }
-
-
-  menuButton?.addEventListener(
-    "click",
-    openMenu
-  );
-
-  closeButton?.addEventListener(
-    "click",
-    closeMenu
-  );
-
-  overlay?.addEventListener(
-    "click",
-    closeMenu
-  );
-
-
-  navItems.forEach(item => {
-
-    item.addEventListener(
-      "click",
-      closeMenu
-    );
-
-  });
-
-}
-
-
-/* ==========================================
-   BOOKING
-   ========================================== */
-
-function setupBooking() {
-
-  const modal =
-    document.getElementById(
-      "booking-modal"
-    );
-
-  const openButton =
-    document.getElementById(
-      "open-booking-btn"
-    );
-
-  const closeButton =
-    document.getElementById(
-      "close-modal"
-    );
-
-  const form =
-    document.getElementById(
-      "booking-form"
-    );
-
-  const status =
-    document.getElementById(
-      "booking-status"
-    );
-
-
-  /* ----------------------------------------
-     OPEN BOOKING MODAL
-     ---------------------------------------- */
-
-  openButton?.addEventListener(
-    "click",
-    () => {
-
-      modal?.classList.remove(
-        "hidden"
-      );
+        });
 
     }
-  );
+);
 
 
-  /* ----------------------------------------
-     CLOSE BOOKING MODAL
-     ---------------------------------------- */
+// =====================================
+// UPLOAD FOLDERS
+// =====================================
 
-  closeButton?.addEventListener(
-    "click",
-    () => {
+const audioFolder =
+    path.join(
+        __dirname,
+        "uploads",
+        "audio"
+    );
 
-      modal?.classList.add(
-        "hidden"
-      );
 
+const coverFolder =
+    path.join(
+        __dirname,
+        "uploads",
+        "covers"
+    );
+
+
+fs.mkdirSync(
+    audioFolder,
+    {
+        recursive: true
     }
-  );
+);
 
 
-  /* ----------------------------------------
-     SUBMIT BOOKING
-     ---------------------------------------- */
-
-  form?.addEventListener(
-    "submit",
-    async event => {
-
-      event.preventDefault();
+fs.mkdirSync(
+    coverFolder,
+    {
+        recursive: true
+    }
+);
 
 
-      /* --------------------------------------
-         GET FORM VALUES
-         -------------------------------------- */
+// =====================================
+// MULTER
+// =====================================
 
-      const mandalInput =
-        document.getElementById(
-          "mandal-name"
-        );
+const storage =
+    multer.diskStorage({
 
-      const nameInput =
-        document.getElementById(
-          "client-name"
-        );
+        destination:
+            function (
+                req,
+                file,
+                cb
+            ) {
 
-      const phoneInput =
-        document.getElementById(
-          "client-phone"
-        );
+                if (
+                    file.fieldname === "audio"
+                ) {
 
-      const detailsInput =
-        document.getElementById(
-          "song-details"
-        );
+                    cb(
+                        null,
+                        audioFolder
+                    );
 
+                }
 
-      const booking = {
+                else if (
+                    file.fieldname === "cover"
+                ) {
 
-        mandal:
-          mandalInput?.value.trim() || "",
+                    cb(
+                        null,
+                        coverFolder
+                    );
 
-        name:
-          nameInput?.value.trim() || "",
+                }
 
-        phone:
-          phoneInput?.value.trim() || "",
+                else {
 
-        details:
-          detailsInput?.value.trim() || "N/A"
+                    cb(
+                        new Error(
+                            "Invalid upload field"
+                        )
+                    );
 
-      };
+                }
 
-
-      /* --------------------------------------
-         VALIDATION
-         -------------------------------------- */
-
-      if (
-        !booking.name ||
-        !booking.phone
-      ) {
-
-        if (status) {
-
-          status.textContent =
-            "Please enter your name and phone number.";
-
-        }
-
-        return;
-
-      }
+            },
 
 
-      /* --------------------------------------
-         SHOW SUBMITTING
-         -------------------------------------- */
+        filename:
+            function (
+                req,
+                file,
+                cb
+            ) {
 
-      if (status) {
+                const safeName =
+                    file.originalname
+                        .replace(
+                            /\s+/g,
+                            "-"
+                        );
 
-        status.textContent =
-          "Submitting booking request...";
 
-      }
+                const uniqueName =
+                    Date.now() +
+                    "-" +
+                    safeName;
 
 
-      /* --------------------------------------
-         SEND TO SERVER
-         -------------------------------------- */
+                cb(
+                    null,
+                    uniqueName
+                );
 
-      try {
-
-        const response =
-          await fetch(
-            `${API_BASE}/api/bookings`,
-            {
-              method: "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-
-              body:
-                JSON.stringify(
-                  booking
-                )
             }
-          );
+
+    });
 
 
-        console.log(
-          "Booking API status:",
-          response.status
-        );
+const upload =
+    multer({
+        storage: storage
+    });
 
 
-        const result =
-          await response.json();
+// =====================================
+// SERVE WEBSITE
+// =====================================
+
+app.use(
+    express.static(
+        __dirname
+    )
+);
 
 
-        console.log(
-          "Booking API response:",
-          result
-        );
+// =====================================
+// SERVE UPLOADED FILES
+// =====================================
+
+app.use(
+    "/uploads",
+    express.static(
+        path.join(
+            __dirname,
+            "uploads"
+        )
+    )
+);
 
 
-        /* ------------------------------------
-           CHECK SERVER RESPONSE
-           ------------------------------------ */
+// =====================================
+// GET SONGS
+// PUBLIC
+// =====================================
 
-        if (!response.ok) {
+app.get(
+    "/api/songs",
+    (req, res) => {
 
-          throw new Error(
-            result.message ||
-            "Booking submission failed"
-          );
+        try {
 
-        }
-
-
-        /* ------------------------------------
-           SUCCESS
-           ------------------------------------ */
-
-        if (status) {
-
-          status.textContent =
-            "Booking request submitted successfully!";
-
-        }
+            const songs =
+                db
+                    .prepare(
+                        `
+                        SELECT *
+                        FROM songs
+                        ORDER BY id DESC
+                        `
+                    )
+                    .all();
 
 
-        /* ------------------------------------
-           RESET FORM & CLOSE MODAL
-           ------------------------------------ */
-
-        setTimeout(() => {
-
-          form.reset();
-
-          if (status) {
-            status.textContent = "";
-          }
-
-          modal?.classList.add(
-            "hidden"
-          );
-
-        }, 1500);
-
-
-      }
-
-      catch (error) {
-
-        console.error(
-          "BOOKING SUBMIT ERROR:",
-          error
-        );
-
-
-        if (status) {
-
-          status.textContent =
-            "Unable to submit booking. Please try again.";
+            res.json(
+                songs
+            );
 
         }
 
-      }
+        catch (error) {
+
+            console.error(
+                "GET SONGS ERROR:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Failed to load songs"
+
+            });
+
+        }
 
     }
-  );
-
-}
+);
 
 
-/* ==========================================
-   SONG UPDATE DETECTION
-   ========================================== */
+// =====================================
+// ADD SONG
+// ADMIN ONLY
+// =====================================
 
-function setupSongUpdates() {
+app.post(
+    "/api/songs",
+    requireAdmin,
+    upload.fields([
 
-  try {
+        {
+            name: "audio",
+            maxCount: 1
+        },
 
-    const channel =
-      new BroadcastChannel(
-        "dj-songs"
-      );
+        {
+            name: "cover",
+            maxCount: 1
+        }
+
+    ]),
+    (req, res) => {
+
+        try {
+
+            const {
+                title,
+                genre,
+                description
+            } = req.body;
 
 
-    channel.onmessage =
-      event => {
+            if (!title) {
 
-        if (
-          event.data?.type ===
-          "songs-updated"
-        ) {
+                return res.status(400).json({
 
-          loadSongs();
+                    success: false,
+
+                    message:
+                        "Song title is required"
+
+                });
+
+            }
+
+
+            if (
+                !req.files ||
+                !req.files.audio ||
+                !req.files.audio[0]
+            ) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Audio file is required"
+
+                });
+
+            }
+
+
+            const audioFile =
+                "/uploads/audio/" +
+                req.files.audio[0].filename;
+
+
+            let coverImage = null;
+
+
+            if (
+                req.files.cover &&
+                req.files.cover[0]
+            ) {
+
+                coverImage =
+                    "/uploads/covers/" +
+                    req.files.cover[0].filename;
+
+            }
+
+
+            const result =
+                db
+                    .prepare(
+                        `
+                        INSERT INTO songs
+
+                        (
+                            title,
+                            genre,
+                            description,
+                            audio_file,
+                            cover_image
+                        )
+
+                        VALUES (?, ?, ?, ?, ?)
+                        `
+                    )
+                    .run(
+
+                        title,
+
+                        genre || "",
+
+                        description || "",
+
+                        audioFile,
+
+                        coverImage
+
+                    );
+
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Song added successfully",
+
+                id:
+                    result.lastInsertRowid
+
+            });
 
         }
 
-      };
+        catch (error) {
 
-  }
-
-  catch (error) {
-
-    console.log(
-      "BroadcastChannel unavailable"
-    );
-
-  }
+            console.error(
+                "ADD SONG ERROR:",
+                error
+            );
 
 
-  window.addEventListener(
-    "storage",
-    event => {
+            res.status(500).json({
 
-      if (
-        event.key ===
-        "dj_songs_updated"
-      ) {
+                success: false,
 
-        loadSongs();
+                message:
+                    "Failed to add song"
 
-      }
+            });
+
+        }
 
     }
-  );
+);
 
 
-  /*
-     Check for new songs every 5 seconds.
-     Prevents multiple requests running together.
-  */
+// =====================================
+// DELETE SONG
+// ADMIN ONLY
+// =====================================
 
-  setInterval(
-    loadSongs,
-    5000
-  );
+app.delete(
+    "/api/songs/:id",
+    requireAdmin,
+    (req, res) => {
 
-}
+        try {
+
+            const song =
+                db
+                    .prepare(
+                        `
+                        SELECT *
+                        FROM songs
+                        WHERE id = ?
+                        `
+                    )
+                    .get(
+                        req.params.id
+                    );
+
+
+            if (!song) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Song not found"
+
+                });
+
+            }
+
+
+            db
+                .prepare(
+                    `
+                    DELETE FROM songs
+                    WHERE id = ?
+                    `
+                )
+                .run(
+                    req.params.id
+                );
+
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Song deleted successfully"
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "DELETE SONG ERROR:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Failed to delete song"
+
+            });
+
+        }
+
+    }
+);
+
+
+// =====================================
+// BOOKINGS
+// =====================================
+
+
+// =====================================
+// SUBMIT BOOKING
+// PUBLIC
+// =====================================
+
+app.post(
+    "/api/bookings",
+    (req, res) => {
+
+        try {
+
+            const {
+                mandal,
+                name,
+                phone,
+                details
+            } = req.body;
+
+
+            if (
+                !name ||
+                !phone
+            ) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Name and phone are required"
+
+                });
+
+            }
+
+
+            const result =
+                db
+                    .prepare(
+                        `
+                        INSERT INTO bookings
+
+                        (
+                            client_name,
+                            email,
+                            phone,
+                            song_name,
+                            requirements
+                        )
+
+                        VALUES (?, ?, ?, ?, ?)
+                        `
+                    )
+                    .run(
+
+                        name,
+
+                        "",
+
+                        phone,
+
+                        mandal ||
+                            "Mandal Song Booking",
+
+                        details ||
+                            ""
+
+                    );
+
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Booking request submitted successfully",
+
+                id:
+                    result.lastInsertRowid
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "BOOKING ERROR:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Failed to submit booking"
+
+            });
+
+        }
+
+    }
+);
+
+
+// =====================================
+// GET BOOKINGS
+// ADMIN ONLY
+// =====================================
+
+app.get(
+    "/api/bookings",
+    requireAdmin,
+    (req, res) => {
+
+        try {
+
+            const bookings =
+                db
+                    .prepare(
+                        `
+                        SELECT *
+                        FROM bookings
+                        ORDER BY id DESC
+                        `
+                    )
+                    .all();
+
+
+            res.json(
+                bookings
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "GET BOOKINGS ERROR:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Failed to load bookings"
+
+            });
+
+        }
+
+    }
+);
+
+
+// =====================================
+// DELETE BOOKING
+// ADMIN ONLY
+// =====================================
+
+app.delete(
+    "/api/bookings/:id",
+    requireAdmin,
+    (req, res) => {
+
+        try {
+
+            const booking =
+                db
+                    .prepare(
+                        `
+                        SELECT *
+                        FROM bookings
+                        WHERE id = ?
+                        `
+                    )
+                    .get(
+                        req.params.id
+                    );
+
+
+            if (!booking) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Booking not found"
+
+                });
+
+            }
+
+
+            db
+                .prepare(
+                    `
+                    DELETE FROM bookings
+                    WHERE id = ?
+                    `
+                )
+                .run(
+                    req.params.id
+                );
+
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Booking deleted successfully"
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "DELETE BOOKING ERROR:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Failed to delete booking"
+
+            });
+
+        }
+
+    }
+);
+
+
+// =====================================
+// TEST API
+// =====================================
+
+app.get(
+    "/api/test",
+    (req, res) => {
+
+        res.json({
+
+            success: true,
+
+            message:
+                "DJ website backend is working!"
+
+        });
+
+    }
+);
+
+
+// =====================================
+// START SERVER
+// =====================================
+
+app.listen(
+    PORT,
+    () => {
+
+        console.log(
+            `Server running at http://localhost:${PORT}`
+        );
+
+    }
+);
