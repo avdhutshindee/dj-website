@@ -6,7 +6,7 @@ const Database = require("better-sqlite3");
 const crypto = require("crypto");
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 
 // =====================================
