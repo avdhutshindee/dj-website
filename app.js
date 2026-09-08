@@ -1,3 +1,5 @@
+const API_BASE = "https://dj-website-backend.onrender.com";
+
 document.addEventListener("DOMContentLoaded", () => {
 
   loadSongs();
@@ -35,13 +37,14 @@ async function loadSongs() {
 
   try {
 
-    const response = await fetch(
-      "/api/songs",
-      {
-        method: "GET",
-        cache: "no-store"
-      }
-    );
+    const response =
+      await fetch(
+        `${API_BASE}/api/songs`,
+        {
+          method: "GET",
+          cache: "no-store"
+        }
+      );
 
     console.log(
       "Songs API status:",
@@ -157,7 +160,7 @@ function createSongCard(
       "song-cover";
 
     cover.src =
-      song.cover_image;
+      getBackendUrl(song.cover_image);
 
     cover.alt =
       (song.title || "Song") + " cover";
@@ -278,6 +281,30 @@ function createSongCard(
 
 
 /* ==========================================
+   BACKEND URL
+   ========================================== */
+
+function getBackendUrl(filePath) {
+
+  if (!filePath) {
+    return "";
+  }
+
+  if (
+    filePath.startsWith("http://") ||
+    filePath.startsWith("https://")
+  ) {
+
+    return filePath;
+
+  }
+
+  return API_BASE + filePath;
+
+}
+
+
+/* ==========================================
    PLAY SONG
    ========================================== */
 
@@ -333,7 +360,7 @@ function playTrack(
 
 
   audio.src =
-    audioSrc;
+    getBackendUrl(audioSrc);
 
   audio.load();
 
@@ -604,7 +631,7 @@ function setupBooking() {
 
         const response =
           await fetch(
-            "/api/bookings",
+            `${API_BASE}/api/bookings`,
             {
               method: "POST",
 
