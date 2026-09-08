@@ -25,10 +25,6 @@
             color: white;
         }
 
-        /* ================================
-           HEADER
-           ================================ */
-
         header {
             background: #151515;
             border-bottom: 1px solid #292929;
@@ -63,19 +59,11 @@
             opacity: 0.8;
         }
 
-        /* ================================
-           CONTAINER
-           ================================ */
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 35px 20px 60px;
         }
-
-        /* ================================
-           WELCOME
-           ================================ */
 
         .welcome {
             margin-bottom: 30px;
@@ -90,10 +78,6 @@
             margin: 0;
             color: #999;
         }
-
-        /* ================================
-           STATISTICS
-           ================================ */
 
         .stats {
             display: grid;
@@ -125,10 +109,6 @@
             font-weight: bold;
         }
 
-        /* ================================
-           MAIN CARDS
-           ================================ */
-
         .card {
             background: #151515;
             border: 1px solid #292929;
@@ -158,10 +138,6 @@
             font-size: 13px;
         }
 
-        /* ================================
-           FORM
-           ================================ */
-
         label {
             display: block;
             margin-bottom: 7px;
@@ -173,7 +149,6 @@
         textarea {
             width: 100%;
             padding: 13px;
-
             margin-bottom: 17px;
 
             background: #222;
@@ -223,10 +198,6 @@
             margin: 17px 0 0;
             font-weight: bold;
         }
-
-        /* ================================
-           SONG GRID
-           ================================ */
 
         .songs-grid {
             display: grid;
@@ -283,10 +254,6 @@
             margin: 8px 0 15px;
         }
 
-        /* ================================
-           BUTTONS
-           ================================ */
-
         .delete-btn {
             padding: 10px 15px;
 
@@ -303,10 +270,6 @@
         .delete-btn:hover {
             opacity: 0.8;
         }
-
-        /* ================================
-           BOOKINGS
-           ================================ */
 
         .booking {
             background: #202020;
@@ -365,10 +328,6 @@
             margin-top: 18px;
         }
 
-        /* ================================
-           MESSAGES
-           ================================ */
-
         .empty {
             color: #777;
             text-align: center;
@@ -384,10 +343,6 @@
             color: #777;
             padding: 20px 0;
         }
-
-        /* ================================
-           MOBILE
-           ================================ */
 
         @media (max-width: 800px) {
 
@@ -468,10 +423,6 @@
 <div class="container">
 
 
-    <!-- ================================
-         WELCOME
-         ================================ -->
-
     <div class="welcome">
 
         <h1>Dashboard</h1>
@@ -482,10 +433,6 @@
 
     </div>
 
-
-    <!-- ================================
-         STATISTICS
-         ================================ -->
 
     <div class="stats">
 
@@ -550,10 +497,6 @@
 
     </div>
 
-
-    <!-- ================================
-         ADD SONG
-         ================================ -->
 
     <div class="card">
 
@@ -639,10 +582,6 @@
     </div>
 
 
-    <!-- ================================
-         SONGS
-         ================================ -->
-
     <div class="card">
 
         <div class="card-header">
@@ -669,10 +608,6 @@
 
     </div>
 
-
-    <!-- ================================
-         BOOKINGS
-         ================================ -->
 
     <div class="card">
 
@@ -705,6 +640,14 @@
 
 
 <script>
+
+
+// =====================================
+// RENDER BACKEND
+// =====================================
+
+const API_BASE =
+    "https://dj-website-backend.onrender.com";
 
 
 // =====================================
@@ -746,6 +689,28 @@ function checkLogin() {
 
 
 // =====================================
+// BACKEND FILE URL
+// =====================================
+
+function getBackendUrl(filePath) {
+
+    if (!filePath) {
+        return "";
+    }
+
+    if (
+        filePath.startsWith("http://") ||
+        filePath.startsWith("https://")
+    ) {
+        return filePath;
+    }
+
+    return API_BASE + filePath;
+
+}
+
+
+// =====================================
 // LOAD SONGS
 // =====================================
 
@@ -755,7 +720,7 @@ async function loadSongs() {
 
         const response =
             await fetch(
-                "/api/songs",
+                API_BASE + "/api/songs",
                 {
                     cache: "no-store"
                 }
@@ -852,7 +817,11 @@ async function loadSongs() {
                 coverHTML = `
 
                     <img
-                        src="${escapeHTML(song.cover_image)}"
+                        src="${escapeHTML(
+                            getBackendUrl(
+                                song.cover_image
+                            )
+                        )}"
                         alt="Song Cover"
                     >
 
@@ -904,7 +873,9 @@ async function loadSongs() {
 
                     <source
                         src="${escapeHTML(
-                            song.audio_file
+                            getBackendUrl(
+                                song.audio_file
+                            )
                         )}"
                     >
 
@@ -1007,7 +978,7 @@ document
 
                 const response =
                     await fetch(
-                        "/api/songs",
+                        API_BASE + "/api/songs",
                         {
 
                             method: "POST",
@@ -1117,7 +1088,7 @@ async function deleteSong(id) {
 
         const response =
             await fetch(
-                `/api/songs/${id}`,
+                `${API_BASE}/api/songs/${id}`,
                 {
 
                     method: "DELETE",
@@ -1214,7 +1185,7 @@ async function loadBookings() {
 
         const response =
             await fetch(
-                "/api/bookings",
+                API_BASE + "/api/bookings",
                 {
 
                     method: "GET",
@@ -1271,8 +1242,6 @@ async function loadBookings() {
 
         }
 
-
-        // STATISTICS
 
         document.getElementById(
             "totalBookings"
@@ -1339,10 +1308,6 @@ async function loadBookings() {
                 div.className =
                     "booking";
 
-
-                // =====================================
-                // INDIA TIME (IST)
-                // =====================================
 
                 const date =
                     booking.created_at
@@ -1554,7 +1519,7 @@ async function deleteBooking(id) {
 
         const response =
             await fetch(
-                `/api/bookings/${id}`,
+                `${API_BASE}/api/bookings/${id}`,
                 {
 
                     method: "DELETE",
@@ -1637,7 +1602,7 @@ async function logout() {
         try {
 
             await fetch(
-                "/api/admin/logout",
+                API_BASE + "/api/admin/logout",
                 {
 
                     method: "POST",
