@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DJ Admin Dashboard</title>
+
+
+    <style>
+
+        body {
+
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background: #111;
+
+            color: white;
+
+        }
+
+
+        header {
+
+            padding: 20px 40px;
+
+            background: #1b1b1b;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+        }
+
+
+        header h2 {
+
+            margin: 0;
+
+        }
+
+
+        .container {
+
+            max-width: 1000px;
+
+            margin: 40px auto;
+
+            padding: 20px;
+
+        }
+
+
+        .card {
+
+            background: #1c1c1c;
+
+            padding: 25px;
+
+            margin-bottom: 30px;
+
+            border-radius: 15px;
+
+        }
+
+
+        input,
+        textarea {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 12px;
+
+            margin: 8px 0 15px;
+
+            background: #292929;
+
+            border: none;
+
+            border-radius: 7px;
+
+            color: white;
+
+        }
+
+
+        textarea {
+
+            min-height: 100px;
+
+            resize: vertical;
+
+        }
+
+
+        button {
+
+            padding: 11px 18px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+        }
+
+
+        .add-btn {
+
+            background: white;
+
+            color: black;
+
+        }
+
+
+        .delete-btn {
+
+            background: #ff4444;
+
+            color: white;
+
+        }
+
+
+        .song {
+
+            background: #292929;
+
+            padding: 20px;
+
+            margin: 15px 0;
+
+            border-radius: 10px;
+
+        }
+
+
+        .song img {
+
+            width: 120px;
+
+            height: 120px;
+
+            object-fit: cover;
+
+            border-radius: 8px;
+
+        }
+
+
+        audio {
+
+            width: 100%;
+
+            margin-top: 10px;
+
+        }
+
+
+        #message {
+
+            margin-top: 15px;
+
+            font-weight: bold;
+
+        }
+
+
+        .booking {
+
+            background: #292929;
+
+            padding: 20px;
+
+            margin: 15px 0;
+
+            border-radius: 10px;
+
+        }
+
+
+        .booking h3 {
+
+            margin-top: 0;
+
+        }
+
+
+        .booking p {
+
+            margin: 10px 0;
+
+            line-height: 1.5;
+
+        }
+
+
+        .phone-btn {
+
+            display: inline-block;
+
+            padding: 11px 18px;
+
+            margin-right: 10px;
+
+            margin-top: 10px;
+
+            background: white;
+
+            color: black;
+
+            text-decoration: none;
+
+            border-radius: 7px;
+
+            font-weight: bold;
+
+        }
+
+
+        .whatsapp-btn {
+
+            display: inline-block;
+
+            padding: 11px 18px;
+
+            margin-top: 10px;
+
+            background: #25D366;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 7px;
+
+            font-weight: bold;
+
+        }
+
+
+        .booking-date {
+
+            color: #aaa;
+
+            font-size: 14px;
+
+        }
+
+
+        .empty {
+
+            color: #aaa;
+
+            padding: 10px 0;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h2>DJ ADMIN PANEL</h2>
+
+
+    <button onclick="logout()">
+
+        Logout
+
+    </button>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <!-- ===================== -->
+    <!-- ADD SONG -->
+    <!-- ===================== -->
+
+
+    <div class="card">
+
+        <h2>🎵 Add New Song</h2>
+
+
+        <form id="songForm">
+
+
+            <label>
+
+                Song Name
+
+            </label>
+
+
+            <input
+
+                type="text"
+
+                name="title"
+
+                placeholder="Enter song name"
+
+                required
+
+            >
+
+
+
+            <label>
+
+                Genre
+
+            </label>
+
+
+            <input
+
+                type="text"
+
+                name="genre"
+
+                placeholder="Hip-Hop / Marathi / EDM"
+
+            >
+
+
+
+            <label>
+
+                Description
+
+            </label>
+
+
+            <textarea
+
+                name="description"
+
+                placeholder="Enter song description"
+
+            ></textarea>
+
+
+
+            <label>
+
+                Audio File
+
+            </label>
+
+
+            <input
+
+                type="file"
+
+                name="audio"
+
+                accept=".mp3,.wav"
+
+                required
+
+            >
+
+
+
+            <label>
+
+                Cover Image
+
+            </label>
+
+
+            <input
+
+                type="file"
+
+                name="cover"
+
+                accept="image/*"
+
+            >
+
+
+
+            <button
+
+                type="submit"
+
+                class="add-btn"
+
+            >
+
+                ADD SONG
+
+            </button>
+
+
+        </form>
+
+
+        <p id="message"></p>
+
+    </div>
+
+
+
+    <!-- ===================== -->
+    <!-- SONG LIST -->
+    <!-- ===================== -->
+
+
+    <div class="card">
+
+        <h2>🎧 Your Songs</h2>
+
+
+        <div id="songsList">
+
+            Loading songs...
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ===================== -->
+    <!-- BOOKING REQUESTS -->
+    <!-- ===================== -->
+
+
+    <div class="card">
+
+        <h2>📋 Booking Requests</h2>
+
+
+        <div id="bookingsList">
+
+            Loading booking requests...
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+// ===============================
+// LOAD SONGS
+// ===============================
+
+
+async function loadSongs() {
+
+
+    try {
+
+
+        const response =
+            await fetch("/api/songs", {
+                cache: "no-store"
+            });
+
+
+        const songs =
+            await response.json();
+
+
+        const list =
+            document.getElementById(
+                "songsList"
+            );
+
+
+        if (!songs.length) {
+
+            list.innerHTML =
+                '<p class="empty">No songs uploaded yet.</p>';
+
+            return;
+
+        }
+
+
+        list.innerHTML = "";
+
+
+        songs.forEach(song => {
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className = "song";
+
+
+            let coverHTML = "";
+
+
+            if (song.cover_image) {
+
+                coverHTML = `
+
+                    <img
+                        src="${song.cover_image}"
+                        alt="Song Cover"
+                    >
+
+                `;
+
+            }
+
+
+            div.innerHTML = `
+
+                ${coverHTML}
+
+                <h3>
+                    ${song.title}
+                </h3>
+
+
+                <p>
+                    <strong>Genre:</strong>
+                    ${song.genre || "Not specified"}
+                </p>
+
+
+                <p>
+                    ${song.description || ""}
+                </p>
+
+
+                <audio controls>
+
+                    <source
+                        src="${song.audio_file}"
+                    >
+
+                    Your browser does not support
+                    audio playback.
+
+                </audio>
+
+
+                <br><br>
+
+
+                <button
+
+                    class="delete-btn"
+
+                    onclick="deleteSong(${song.id})"
+
+                >
+
+                    DELETE
+
+                </button>
+
+            `;
+
+
+            list.appendChild(div);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "songsList"
+        ).innerHTML =
+            '<p class="empty">Unable to load songs.</p>';
+
+    }
+
+}
+
+
+
+// ===============================
+// ADD SONG
+// ===============================
+
+
+document
+    .getElementById("songForm")
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+
+            event.preventDefault();
+
+
+            const formData =
+                new FormData(this);
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        "/api/songs",
+                        {
+
+                            method: "POST",
+
+                            body: formData
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                document.getElementById(
+                    "message"
+                ).innerText =
+                    data.message;
+
+
+                if (data.success) {
+
+
+                    this.reset();
+
+
+                    loadSongs();
+
+                }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                document.getElementById(
+                    "message"
+                ).innerText =
+                    "Something went wrong.";
+
+            }
+
+        }
+    );
+
+
+
+// ===============================
+// DELETE SONG
+// ===============================
+
+
+async function deleteSong(id) {
+
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this song?"
+        );
+
+
+    if (!confirmDelete) {
+
+        return;
+
+    }
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                `/api/songs/${id}`,
+                {
+
+                    method: "DELETE"
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        alert(data.message);
+
+
+        if (data.success) {
+
+            loadSongs();
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to delete song."
+        );
+
+    }
+
+}
+
+
+
+// ===============================
+// LOAD BOOKINGS
+// ===============================
+
+
+async function loadBookings() {
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/api/bookings",
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load bookings"
+            );
+
+        }
+
+
+        const bookings =
+            await response.json();
+
+
+        const list =
+            document.getElementById(
+                "bookingsList"
+            );
+
+
+        if (!bookings.length) {
+
+            list.innerHTML =
+                '<p class="empty">No booking requests yet.</p>';
+
+            return;
+
+        }
+
+
+        list.innerHTML = "";
+
+
+        bookings.forEach(booking => {
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className = "booking";
+
+
+            const phone =
+                booking.phone || "";
+
+
+            const whatsappNumber =
+                phone.replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+
+            div.innerHTML = `
+
+                <h3>
+                    🎧 ${escapeHTML(
+                        booking.name || "Unknown"
+                    )}
+                </h3>
+
+
+                <p>
+
+                    <strong>Mandal:</strong>
+
+                    ${escapeHTML(
+                        booking.mandal ||
+                        "Not provided"
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>Phone:</strong>
+
+                    ${escapeHTML(
+                        booking.phone ||
+                        "Not provided"
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>Song / Details:</strong>
+
+                    ${escapeHTML(
+                        booking.details ||
+                        "N/A"
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>Booking ID:</strong>
+
+                    ${booking.id}
+
+                </p>
+
+
+                <p class="booking-date">
+
+                    ${booking.created_at
+                        ? escapeHTML(
+                            booking.created_at
+                          )
+                        : ""}
+
+                </p>
+
+
+                ${
+                    phone
+                        ? `
+
+                            <a
+                                class="phone-btn"
+                                href="tel:${encodeURIComponent(phone)}"
+                            >
+                                📞 CALL
+                            </a>
+
+                        `
+                        : ""
+                }
+
+
+                ${
+                    whatsappNumber
+                        ? `
+
+                            <a
+                                class="whatsapp-btn"
+                                href="https://wa.me/${whatsappNumber}"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                💬 WHATSAPP
+                            </a>
+
+                        `
+                        : ""
+                }
+
+
+                <br>
+
+
+                <button
+
+                    class="delete-btn"
+
+                    onclick="deleteBooking(${booking.id})"
+
+                >
+
+                    DELETE BOOKING
+
+                </button>
+
+            `;
+
+
+            list.appendChild(div);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "bookingsList"
+        ).innerHTML =
+            '<p class="empty">Unable to load booking requests.</p>';
+
+    }
+
+}
+
+
+
+// ===============================
+// DELETE BOOKING
+// ===============================
+
+
+async function deleteBooking(id) {
+
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this booking?"
+        );
+
+
+    if (!confirmDelete) {
+
+        return;
+
+    }
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                `/api/bookings/${id}`,
+                {
+
+                    method: "DELETE"
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        alert(data.message);
+
+
+        if (data.success) {
+
+            loadBookings();
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to delete booking."
+        );
+
+    }
+
+}
+
+
+
+// ===============================
+// ESCAPE HTML
+// ===============================
+
+
+function escapeHTML(value) {
+
+
+    const div =
+        document.createElement("div");
+
+
+    div.textContent =
+        value;
+
+
+    return div.innerHTML;
+
+}
+
+
+
+// ===============================
+// LOGOUT
+// ===============================
+
+
+function logout() {
+
+    window.location.href =
+        "admin-login.html";
+
+}
+
+
+
+// ===============================
+// INITIAL LOAD
+// ===============================
+
+
+loadSongs();
+
+loadBookings();
+
+
+
+// ===============================
+// AUTO REFRESH BOOKINGS
+// ===============================
+
+
+setInterval(
+    loadBookings,
+    5000
+);
+
+
+</script>
+
+
+</body>
+
+</html>

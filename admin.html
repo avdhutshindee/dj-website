@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DJ Admin Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b0b0b;
+            color: white;
+        }
+
+        /* ================================
+           HEADER
+           ================================ */
+
+        header {
+            background: #151515;
+            border-bottom: 1px solid #292929;
+            padding: 18px 35px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h2 {
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* ================================
+           CONTAINER
+           ================================ */
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 35px 20px 60px;
+        }
+
+        /* ================================
+           WELCOME
+           ================================ */
+
+        .welcome {
+            margin-bottom: 30px;
+        }
+
+        .welcome h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
+        }
+
+        .welcome p {
+            margin: 0;
+            color: #999;
+        }
+
+        /* ================================
+           STATISTICS
+           ================================ */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #171717;
+            border: 1px solid #292929;
+            border-radius: 14px;
+            padding: 25px;
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        /* ================================
+           MAIN CARDS
+           ================================ */
+
+        .card {
+            background: #151515;
+            border: 1px solid #292929;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .count {
+            background: #292929;
+            color: #ccc;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        /* ================================
+           FORM
+           ================================ */
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 13px;
+
+            margin-bottom: 17px;
+
+            background: #222;
+            border: 1px solid #333;
+
+            border-radius: 8px;
+
+            color: white;
+            outline: none;
+
+            font-size: 14px;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #777;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        input[type="file"] {
+            cursor: pointer;
+        }
+
+        .add-btn {
+            padding: 13px 22px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: white;
+            color: black;
+
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            opacity: 0.8;
+        }
+
+        #message {
+            min-height: 20px;
+            margin: 17px 0 0;
+            font-weight: bold;
+        }
+
+        /* ================================
+           SONG GRID
+           ================================ */
+
+        .songs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .song {
+            background: #202020;
+            border: 1px solid #303030;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .song-top {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .song img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 9px;
+            background: #111;
+            flex-shrink: 0;
+        }
+
+        .song-info {
+            min-width: 0;
+        }
+
+        .song h3 {
+            margin: 5px 0 8px;
+            font-size: 18px;
+            word-break: break-word;
+        }
+
+        .genre {
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .description {
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 12px 0;
+        }
+
+        audio {
+            width: 100%;
+            margin: 8px 0 15px;
+        }
+
+        /* ================================
+           BUTTONS
+           ================================ */
+
+        .delete-btn {
+            padding: 10px 15px;
+
+            border: none;
+            border-radius: 7px;
+
+            background: #e53935;
+            color: white;
+
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* ================================
+           BOOKINGS
+           ================================ */
+
+        .booking {
+            background: #202020;
+            border: 1px solid #303030;
+            border-radius: 12px;
+
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .booking:last-child {
+            margin-bottom: 0;
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .booking h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .status {
+            background: #333;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .booking p {
+            margin: 9px 0;
+            line-height: 1.5;
+            color: #ccc;
+            word-break: break-word;
+        }
+
+        .booking-label {
+            color: white;
+            font-weight: bold;
+        }
+
+        .booking-date {
+            color: #777 !important;
+            font-size: 12px;
+            margin-top: 15px !important;
+        }
+
+        .booking-actions {
+            margin-top: 18px;
+        }
+
+        /* ================================
+           MESSAGES
+           ================================ */
+
+        .empty {
+            color: #777;
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .error-message {
+            color: #ff7777;
+            padding: 15px 0;
+        }
+
+        .loading {
+            color: #777;
+            padding: 20px 0;
+        }
+
+        /* ================================
+           MOBILE
+           ================================ */
+
+        @media (max-width: 800px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .songs-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 16px 18px;
+            }
+
+            header h2 {
+                font-size: 17px;
+            }
+
+            .container {
+                padding: 25px 12px 45px;
+            }
+
+            .welcome h1 {
+                font-size: 26px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .card-header {
+                align-items: flex-start;
+            }
+
+            .song-top {
+                flex-direction: column;
+            }
+
+            .song img {
+                width: 100%;
+                height: 180px;
+            }
+
+            .booking-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h2>🎧 DJ ADMIN PANEL</h2>
+
+    <button
+        class="logout-btn"
+        onclick="logout()"
+    >
+        LOGOUT
+    </button>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- ================================
+         WELCOME
+         ================================ -->
+
+    <div class="welcome">
+
+        <h1>Dashboard</h1>
+
+        <p>
+            Manage your songs and booking requests.
+        </p>
+
+    </div>
+
+
+    <!-- ================================
+         STATISTICS
+         ================================ -->
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🎵
+            </div>
+
+            <div class="stat-title">
+                TOTAL SONGS
+            </div>
+
+            <div
+                class="stat-number"
+                id="totalSongs"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📋
+            </div>
+
+            <div class="stat-title">
+                TOTAL BOOKINGS
+            </div>
+
+            <div
+                class="stat-number"
+                id="totalBookings"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ⏳
+            </div>
+
+            <div class="stat-title">
+                PENDING BOOKINGS
+            </div>
+
+            <div
+                class="stat-number"
+                id="pendingBookings"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         ADD SONG
+         ================================ -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>🎵 Add New Song</h2>
+
+        </div>
+
+
+        <form id="songForm">
+
+
+            <label>
+                Song Name
+            </label>
+
+            <input
+                type="text"
+                name="title"
+                placeholder="Enter song name"
+                required
+            >
+
+
+            <label>
+                Genre
+            </label>
+
+            <input
+                type="text"
+                name="genre"
+                placeholder="Hip-Hop / Marathi / EDM"
+            >
+
+
+            <label>
+                Description
+            </label>
+
+            <textarea
+                name="description"
+                placeholder="Enter song description"
+            ></textarea>
+
+
+            <label>
+                Audio File
+            </label>
+
+            <input
+                type="file"
+                name="audio"
+                accept=".mp3,.wav"
+                required
+            >
+
+
+            <label>
+                Cover Image
+            </label>
+
+            <input
+                type="file"
+                name="cover"
+                accept="image/*"
+            >
+
+
+            <button
+                type="submit"
+                class="add-btn"
+            >
+                ADD SONG
+            </button>
+
+
+        </form>
+
+
+        <p id="message"></p>
+
+    </div>
+
+
+    <!-- ================================
+         SONGS
+         ================================ -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>🎧 Your Songs</h2>
+
+            <span
+                class="count"
+                id="songCount"
+            >
+                0 songs
+            </span>
+
+        </div>
+
+
+        <div id="songsList">
+
+            <p class="loading">
+                Loading songs...
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         BOOKINGS
+         ================================ -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>📋 Booking Requests</h2>
+
+            <span
+                class="count"
+                id="bookingCount"
+            >
+                0 bookings
+            </span>
+
+        </div>
+
+
+        <div id="bookingsList">
+
+            <p class="loading">
+                Loading bookings...
+            </p>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+// =====================================
+// GET ADMIN TOKEN
+// =====================================
+
+function getAdminToken() {
+
+    return localStorage.getItem(
+        "dj_admin_token"
+    );
+
+}
+
+
+// =====================================
+// CHECK LOGIN
+// =====================================
+
+function checkLogin() {
+
+    const token =
+        getAdminToken();
+
+
+    if (!token) {
+
+        window.location.href =
+            "admin-login.html";
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+// =====================================
+// LOAD SONGS
+// =====================================
+
+async function loadSongs() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/songs",
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        const songs =
+            await response.json();
+
+
+        const list =
+            document.getElementById(
+                "songsList"
+            );
+
+
+        const totalSongs =
+            document.getElementById(
+                "totalSongs"
+            );
+
+
+        const songCount =
+            document.getElementById(
+                "songCount"
+            );
+
+
+        if (!Array.isArray(songs)) {
+
+            throw new Error(
+                "Invalid songs response"
+            );
+
+        }
+
+
+        totalSongs.innerText =
+            songs.length;
+
+
+        songCount.innerText =
+            songs.length +
+            (
+                songs.length === 1
+                    ? " song"
+                    : " songs"
+            );
+
+
+        if (songs.length === 0) {
+
+            list.innerHTML = `
+
+                <p class="empty">
+                    No songs uploaded yet.
+                </p>
+
+            `;
+
+            return;
+
+        }
+
+
+        list.innerHTML =
+            '<div class="songs-grid"></div>';
+
+
+        const grid =
+            list.querySelector(
+                ".songs-grid"
+            );
+
+
+        songs.forEach(song => {
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "song";
+
+
+            let coverHTML = "";
+
+
+            if (song.cover_image) {
+
+                coverHTML = `
+
+                    <img
+                        src="${escapeHTML(song.cover_image)}"
+                        alt="Song Cover"
+                    >
+
+                `;
+
+            }
+
+
+            div.innerHTML = `
+
+                <div class="song-top">
+
+                    ${coverHTML}
+
+                    <div class="song-info">
+
+                        <h3>
+                            ${escapeHTML(
+                                song.title
+                            )}
+                        </h3>
+
+                        <div class="genre">
+
+                            Genre:
+                            ${escapeHTML(
+                                song.genre ||
+                                "Not specified"
+                            )}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <p class="description">
+
+                    ${escapeHTML(
+                        song.description ||
+                        "No description"
+                    )}
+
+                </p>
+
+
+                <audio controls>
+
+                    <source
+                        src="${escapeHTML(
+                            song.audio_file
+                        )}"
+                    >
+
+                    Your browser does not support
+                    audio playback.
+
+                </audio>
+
+
+                <button
+                    class="delete-btn"
+                    onclick="deleteSong(${song.id})"
+                >
+
+                    DELETE SONG
+
+                </button>
+
+            `;
+
+
+            grid.appendChild(div);
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "LOAD SONGS ERROR:",
+            error
+        );
+
+
+        document.getElementById(
+            "songsList"
+        ).innerHTML = `
+
+            <p class="error-message">
+                Unable to load songs.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+// =====================================
+// ADD SONG
+// =====================================
+
+document
+    .getElementById("songForm")
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            if (!checkLogin()) {
+                return;
+            }
+
+
+            const token =
+                getAdminToken();
+
+
+            const formData =
+                new FormData(this);
+
+
+            const message =
+                document.getElementById(
+                    "message"
+                );
+
+
+            const button =
+                this.querySelector(
+                    ".add-btn"
+                );
+
+
+            try {
+
+                button.disabled = true;
+
+                button.innerText =
+                    "UPLOADING...";
+
+
+                message.innerText =
+                    "Uploading song...";
+
+
+                const response =
+                    await fetch(
+                        "/api/songs",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Authorization":
+                                    "Bearer " +
+                                    token
+
+                            },
+
+                            body: formData
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    response.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "dj_admin_token"
+                    );
+
+                    window.location.href =
+                        "admin-login.html";
+
+                    return;
+
+                }
+
+
+                message.innerText =
+                    data.message ||
+                    "Something went wrong.";
+
+
+                if (data.success) {
+
+                    this.reset();
+
+                    loadSongs();
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "ADD SONG ERROR:",
+                    error
+                );
+
+
+                message.innerText =
+                    "Unable to upload song.";
+
+            }
+
+            finally {
+
+                button.disabled = false;
+
+                button.innerText =
+                    "ADD SONG";
+
+            }
+
+        }
+    );
+
+
+// =====================================
+// DELETE SONG
+// =====================================
+
+async function deleteSong(id) {
+
+    if (!checkLogin()) {
+        return;
+    }
+
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this song?"
+        );
+
+
+    if (!confirmDelete) {
+        return;
+    }
+
+
+    const token =
+        getAdminToken();
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/songs/${id}`,
+                {
+
+                    method: "DELETE",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " +
+                            token
+
+                    }
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            response.status === 401
+        ) {
+
+            localStorage.removeItem(
+                "dj_admin_token"
+            );
+
+            window.location.href =
+                "admin-login.html";
+
+            return;
+
+        }
+
+
+        if (data.success) {
+
+            loadSongs();
+
+        }
+
+
+        alert(
+            data.message ||
+            "Done"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "DELETE SONG ERROR:",
+            error
+        );
+
+
+        alert(
+            "Unable to delete song."
+        );
+
+    }
+
+}
+
+
+// =====================================
+// LOAD BOOKINGS
+// =====================================
+
+async function loadBookings() {
+
+    const list =
+        document.getElementById(
+            "bookingsList"
+        );
+
+
+    if (!checkLogin()) {
+        return;
+    }
+
+
+    const token =
+        getAdminToken();
+
+
+    try {
+
+        list.innerHTML =
+            '<p class="loading">Loading bookings...</p>';
+
+
+        const response =
+            await fetch(
+                "/api/bookings",
+                {
+
+                    method: "GET",
+
+                    cache: "no-store",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " +
+                            token
+
+                    }
+
+                }
+            );
+
+
+        const bookings =
+            await response.json();
+
+
+        if (
+            response.status === 401
+        ) {
+
+            localStorage.removeItem(
+                "dj_admin_token"
+            );
+
+            window.location.href =
+                "admin-login.html";
+
+            return;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                bookings.message ||
+                "Failed to load bookings"
+            );
+
+        }
+
+
+        if (!Array.isArray(bookings)) {
+
+            throw new Error(
+                "Invalid bookings response"
+            );
+
+        }
+
+
+        // STATISTICS
+
+        document.getElementById(
+            "totalBookings"
+        ).innerText =
+            bookings.length;
+
+
+        const pending =
+            bookings.filter(
+                booking =>
+                    String(
+                        booking.status ||
+                        "Pending"
+                    ).toLowerCase() ===
+                    "pending"
+            ).length;
+
+
+        document.getElementById(
+            "pendingBookings"
+        ).innerText =
+            pending;
+
+
+        document.getElementById(
+            "bookingCount"
+        ).innerText =
+            bookings.length +
+            (
+                bookings.length === 1
+                    ? " booking"
+                    : " bookings"
+            );
+
+
+        if (bookings.length === 0) {
+
+            list.innerHTML = `
+
+                <p class="empty">
+                    No booking requests yet.
+                </p>
+
+            `;
+
+            return;
+
+        }
+
+
+        list.innerHTML = "";
+
+
+        bookings.forEach(
+            booking => {
+
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "booking";
+
+
+                // =====================================
+                // INDIA TIME (IST)
+                // =====================================
+
+                const date =
+                    booking.created_at
+                        ? new Date(
+                            booking.created_at.replace(
+                                " ",
+                                "T"
+                            ) + "Z"
+                        ).toLocaleString(
+                            "en-IN",
+                            {
+                                timeZone:
+                                    "Asia/Kolkata",
+
+                                day:
+                                    "2-digit",
+
+                                month:
+                                    "2-digit",
+
+                                year:
+                                    "numeric",
+
+                                hour:
+                                    "2-digit",
+
+                                minute:
+                                    "2-digit",
+
+                                second:
+                                    "2-digit",
+
+                                hour12:
+                                    true
+                            }
+                        )
+                        : "Unknown date";
+
+
+                div.innerHTML = `
+
+                    <div class="booking-header">
+
+                        <h3>
+                            🎉 Booking #${booking.id}
+                        </h3>
+
+                        <span class="status">
+
+                            ${escapeHTML(
+                                booking.status ||
+                                "Pending"
+                            )}
+
+                        </span>
+
+                    </div>
+
+
+                    <p>
+
+                        <span class="booking-label">
+                            Client:
+                        </span>
+
+                        ${escapeHTML(
+                            booking.client_name ||
+                            "Not provided"
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <span class="booking-label">
+                            Phone:
+                        </span>
+
+                        ${escapeHTML(
+                            booking.phone ||
+                            "Not provided"
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <span class="booking-label">
+                            Email:
+                        </span>
+
+                        ${escapeHTML(
+                            booking.email ||
+                            "Not provided"
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <span class="booking-label">
+                            Song / Mandal:
+                        </span>
+
+                        ${escapeHTML(
+                            booking.song_name ||
+                            "Not provided"
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <span class="booking-label">
+                            Requirements:
+                        </span>
+
+                        ${escapeHTML(
+                            booking.requirements ||
+                            "N/A"
+                        )}
+
+                    </p>
+
+
+                    <p class="booking-date">
+
+                        Submitted:
+                        ${escapeHTML(date)}
+
+                    </p>
+
+
+                    <div class="booking-actions">
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteBooking(${booking.id})"
+                        >
+
+                            DELETE BOOKING
+
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                list.appendChild(div);
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "LOAD BOOKINGS ERROR:",
+            error
+        );
+
+
+        list.innerHTML = `
+
+            <p class="error-message">
+                Unable to load bookings.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+// =====================================
+// DELETE BOOKING
+// =====================================
+
+async function deleteBooking(id) {
+
+    if (!checkLogin()) {
+        return;
+    }
+
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this booking?"
+        );
+
+
+    if (!confirmDelete) {
+        return;
+    }
+
+
+    const token =
+        getAdminToken();
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/bookings/${id}`,
+                {
+
+                    method: "DELETE",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " +
+                            token
+
+                    }
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            response.status === 401
+        ) {
+
+            localStorage.removeItem(
+                "dj_admin_token"
+            );
+
+            window.location.href =
+                "admin-login.html";
+
+            return;
+
+        }
+
+
+        if (data.success) {
+
+            loadBookings();
+
+        }
+
+
+        alert(
+            data.message ||
+            "Done"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "DELETE BOOKING ERROR:",
+            error
+        );
+
+
+        alert(
+            "Unable to delete booking."
+        );
+
+    }
+
+}
+
+
+// =====================================
+// LOGOUT
+// =====================================
+
+async function logout() {
+
+    const token =
+        getAdminToken();
+
+
+    if (token) {
+
+        try {
+
+            await fetch(
+                "/api/admin/logout",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " +
+                            token
+
+                    }
+
+                }
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "LOGOUT ERROR:",
+                error
+            );
+
+        }
+
+    }
+
+
+    localStorage.removeItem(
+        "dj_admin_token"
+    );
+
+
+    window.location.href =
+        "admin-login.html";
+
+}
+
+
+// =====================================
+// ESCAPE HTML
+// =====================================
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        String(value);
+
+
+    return div.innerHTML;
+
+}
+
+
+// =====================================
+// PAGE START
+// =====================================
+
+if (checkLogin()) {
+
+    loadSongs();
+
+    loadBookings();
+
+}
+
+</script>
+
+
+</body>
+
+</html>

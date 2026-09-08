@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DJ Admin Login</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background: #111;
+
+            color: white;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            min-height: 100vh;
+
+        }
+
+
+        .login-box {
+
+            width: 350px;
+
+            max-width: 90%;
+
+            padding: 35px;
+
+            background: #1c1c1c;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 0 30px
+                rgba(255,255,255,0.08);
+
+        }
+
+
+        h1 {
+
+            text-align: center;
+
+            margin-top: 0;
+
+            margin-bottom: 30px;
+
+            letter-spacing: 2px;
+
+        }
+
+
+        input {
+
+            width: 100%;
+
+            padding: 13px;
+
+            margin-bottom: 15px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #2b2b2b;
+
+            color: white;
+
+            outline: none;
+
+            font-size: 15px;
+
+        }
+
+
+        input:focus {
+
+            outline: 1px solid white;
+
+        }
+
+
+        button {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: white;
+
+            color: black;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            font-size: 15px;
+
+        }
+
+
+        button:hover {
+
+            opacity: 0.8;
+
+        }
+
+
+        button:disabled {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+        }
+
+
+        #message {
+
+            text-align: center;
+
+            margin-top: 15px;
+
+            margin-bottom: 0;
+
+            min-height: 20px;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="login-box">
+
+        <h1>DJ ADMIN</h1>
+
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Username"
+            autocomplete="username"
+        >
+
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            autocomplete="current-password"
+        >
+
+
+        <button
+            id="loginButton"
+            onclick="login()"
+        >
+            LOGIN
+        </button>
+
+
+        <p id="message"></p>
+
+    </div>
+
+
+    <script>
+
+        // ===============================
+        // ADMIN LOGIN
+        // ===============================
+
+        async function login() {
+
+            const username =
+                document
+                    .getElementById("username")
+                    .value
+                    .trim();
+
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
+
+            const message =
+                document.getElementById("message");
+
+            const loginButton =
+                document.getElementById("loginButton");
+
+
+            if (!username || !password) {
+
+                message.innerText =
+                    "Please enter username and password.";
+
+                return;
+
+            }
+
+
+            try {
+
+                loginButton.disabled = true;
+
+                message.innerText =
+                    "Logging in...";
+
+
+                const response =
+                    await fetch(
+                        "/api/admin/login",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                username:
+                                    username,
+
+                                password:
+                                    password
+
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (response.ok && data.success) {
+
+                    // Save the SERVER authentication token
+                    localStorage.setItem(
+                        "dj_admin_token",
+                        data.token
+                    );
+
+
+                    // Remove old authentication method
+                    localStorage.removeItem(
+                        "dj_admin_logged_in"
+                    );
+
+
+                    message.innerText =
+                        "Login successful!";
+
+
+                    setTimeout(() => {
+
+                        window.location.href =
+                            "admin.html";
+
+                    }, 500);
+
+
+                } else {
+
+                    message.innerText =
+                        data.message ||
+                        "Invalid username or password.";
+
+                    loginButton.disabled = false;
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "LOGIN ERROR:",
+                    error
+                );
+
+
+                message.innerText =
+                    "Unable to connect to server.";
+
+                loginButton.disabled = false;
+
+            }
+
+        }
+
+
+        // ===============================
+        // ENTER KEY LOGIN
+        // ===============================
+
+        document
+            .getElementById("username")
+            .addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (event.key === "Enter") {
+
+                        login();
+
+                    }
+
+                }
+            );
+
+
+        document
+            .getElementById("password")
+            .addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (event.key === "Enter") {
+
+                        login();
+
+                    }
+
+                }
+            );
+
+
+        // ===============================
+        // CLEAR OLD LOGIN FLAG
+        // ===============================
+
+        localStorage.removeItem(
+            "dj_admin_logged_in"
+        );
+
+    </script>
+
+
+</body>
+
+</html>

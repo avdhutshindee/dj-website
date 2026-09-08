@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>DJ Sourabh Kolhapur | Official Hub</title>
+
+  <link rel="stylesheet" href="style.css?v=1002">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  >
+
+  <!-- ==============================
+       ANIMATION EFFECTS
+       ============================== -->
+
+  <style>
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      animation: pageFadeIn 0.8s ease forwards;
+    }
+
+    @keyframes pageFadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* BRAND ANIMATION */
+
+    .brand-header {
+      animation: brandEntrance 1s ease-out forwards;
+    }
+
+    @keyframes brandEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(-35px) scale(0.96);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .headphone-icon {
+      animation: headphoneFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes headphoneFloat {
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-7px) rotate(3deg);
+      }
+    }
+
+    .logo-title {
+      animation: logoReveal 1s ease-out 0.15s both;
+    }
+
+    .logo-main {
+      animation: logoReveal 1s ease-out 0.3s both;
+    }
+
+    .logo-subtitle {
+      animation: logoReveal 1s ease-out 0.45s both;
+    }
+
+    @keyframes logoReveal {
+      from {
+        opacity: 0;
+        letter-spacing: 0.05em;
+        transform: translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    /* BOOKING CTA */
+
+    .booking-cta {
+      animation: bookingEntrance 1s ease-out 0.5s both;
+    }
+
+    @keyframes bookingEntrance {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .btn-book {
+      transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+    }
+
+    .btn-book:hover {
+      transform: translateY(-3px) scale(1.02);
+      filter: brightness(1.08);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-book:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+
+    /* SECTION REVEAL */
+
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(45px);
+      transition:
+        opacity 0.8s ease,
+        transform 0.8s ease;
+    }
+
+    .reveal-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+
+    /* MUSIC HEADING */
+
+    .music-heading-icon {
+      display: inline-block;
+      animation: musicIconPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes musicIconPulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.15);
+      }
+    }
+
+
+    /* INFO LIST */
+
+    .info-list li {
+      transition:
+        transform 0.25s ease,
+        padding-left 0.25s ease;
+    }
+
+    .info-list li:hover {
+      transform: translateX(6px);
+      padding-left: 4px;
+    }
+
+
+    /* STATS */
+
+    .stat-card {
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    .stat-number {
+      animation: statGlow 2.5s ease-in-out infinite;
+    }
+
+    @keyframes statGlow {
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.75;
+      }
+    }
+
+
+    /* NAVIGATION */
+
+    .hamburger-btn {
+      transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+    }
+
+    .hamburger-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .close-btn {
+      transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+    }
+
+    .close-btn:hover {
+      transform: rotate(90deg);
+    }
+
+    .nav-item {
+      transition:
+        transform 0.25s ease,
+        padding-left 0.25s ease;
+    }
+
+    .nav-item:hover {
+      transform: translateX(5px);
+      padding-left: 5px;
+    }
+
+
+    /* BOOKING MODAL */
+
+    .modal-content {
+      animation: modalEntrance 0.35s ease-out;
+    }
+
+    @keyframes modalEntrance {
+      from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+
+    /* FORM INPUTS */
+
+    #booking-form input,
+    #booking-form textarea {
+      transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.2s ease;
+    }
+
+    #booking-form input:focus,
+    #booking-form textarea:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+      outline: none;
+    }
+
+
+    /* PLAYER */
+
+    .player-bar {
+      animation: playerSlideUp 0.5s ease-out;
+    }
+
+    @keyframes playerSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(100%);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    /* REDUCED MOTION */
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .reveal-section {
+        opacity: 1;
+        transform: none;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <!-- ==============================
+       MENU BUTTON
+       ============================== -->
+
+  <button
+    id="menu-toggle"
+    class="hamburger-btn"
+    aria-label="Toggle Navigation"
+  >
+    <span></span>
+    <span></span>
+  </button>
+
+
+  <!-- ==============================
+       SIDEBAR
+       ============================== -->
+
+  <nav id="sidebar" class="sidebar hidden">
+
+    <div class="sidebar-header">
+
+      <h4>DJ SOURABH</h4>
+
+      <span
+        id="close-sidebar"
+        class="close-btn"
+      >
+        &times;
+      </span>
+
+    </div>
+
+    <ul class="nav-links">
+
+      <li>
+        <a href="#brand-header" class="nav-item">
+          <span class="nav-icon">🏠</span>
+          Home
+        </a>
+      </li>
+
+      <li>
+        <a href="#music-section" class="nav-item">
+          <span class="nav-icon">🎵</span>
+          Listen to My Songs
+        </a>
+      </li>
+
+      <li>
+        <a href="#services-section" class="nav-item">
+          <span class="nav-icon">⚡</span>
+          Services
+        </a>
+      </li>
+
+      <li>
+        <a href="#projects-section" class="nav-item">
+          <span class="nav-icon">🚀</span>
+          Projects
+        </a>
+      </li>
+
+      <li>
+        <a href="#about-section" class="nav-item">
+          <span class="nav-icon">ℹ️</span>
+          About
+        </a>
+      </li>
+
+      <li>
+        <a href="#social-section" class="nav-item">
+          <span class="nav-icon">🌐</span>
+          Connect
+        </a>
+      </li>
+
+    </ul>
+
+  </nav>
+
+  <div id="sidebar-overlay" class="overlay hidden"></div>
+
+
+  <!-- ==============================
+       MAIN
+       ============================== -->
+
+  <main class="container">
+
+
+    <!-- ==============================
+         BRAND
+         ============================== -->
+
+    <header id="brand-header" class="brand-header">
+
+      <div class="headphone-icon">
+        🎧
+      </div>
+
+      <h1 class="logo-title">
+        DEEJAY
+      </h1>
+
+      <h2 class="logo-main">
+        SOURABH
+      </h2>
+
+      <p class="logo-subtitle">
+        K O L H A P U R
+      </p>
+
+    </header>
+
+
+    <!-- ==============================
+         BOOKING
+         ============================== -->
+
+    <section class="booking-cta">
+
+      <h3>
+        Book your Mandal song Now
+      </h3>
+
+      <button
+        id="open-booking-btn"
+        class="btn-book"
+      >
+        BOOK NOW
+      </button>
+
+    </section>
+
+
+    <!-- ==============================
+         MUSIC
+         ============================== -->
+
+    <section
+      id="music-section"
+      class="card-glass music-card reveal-section"
+    >
+
+      <div class="music-heading">
+
+        <span class="music-heading-icon">
+          🎵
+        </span>
+
+        <h4 class="card-header">
+          Listen to My Songs
+        </h4>
+
+      </div>
+
+      <div
+        id="track-list"
+        class="track-list"
+      >
+
+        <div class="songs-loading">
+          Loading songs...
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==============================
+         SERVICES
+         ============================== -->
+
+    <section
+      id="services-section"
+      class="card-glass section-spacing reveal-section"
+    >
+
+      <h4 class="card-header">
+        Services
+      </h4>
+
+      <ul class="info-list">
+
+        <li>
+          🔥 Mandal Song Custom Mixing
+        </li>
+
+        <li>
+          🥁 Dhol Tasha & Trance Fusion
+        </li>
+
+        <li>
+          🎧 Live Event DJ Setup & Performance
+        </li>
+
+        <li>
+          🔊 Sound Design & Mastering
+        </li>
+
+      </ul>
+
+    </section>
+
+
+    <!-- ==============================
+         PROJECTS
+         ============================== -->
+
+    <section
+      id="projects-section"
+      class="card-glass section-spacing reveal-section"
+    >
+
+      <h4 class="card-header">
+        Projects
+      </h4>
+
+      <ul class="info-list">
+
+        <li>
+          🏆 Ganesh Utsav Special Anthems
+        </li>
+
+        <li>
+          🚩 Shiv Jayanti Power Remixes
+        </li>
+
+        <li>
+          ⚡ Kolhapur DJ Club Drops
+        </li>
+
+      </ul>
+
+    </section>
+
+
+    <!-- ==============================
+         ABOUT
+         ============================== -->
+
+    <section
+      id="about-section"
+      class="card-glass section-spacing reveal-section"
+    >
+
+      <h4 class="card-header">
+        About DJ Sourabh
+      </h4>
+
+      <div class="stats-grid">
+
+        <div class="stat-card">
+
+          <span class="stat-number">
+            8+
+          </span>
+
+          <span class="stat-label">
+            Years Experience
+          </span>
+
+        </div>
+
+        <div class="stat-card">
+
+          <span class="stat-number">
+            1000+
+          </span>
+
+          <span class="stat-label">
+            Songs Produced
+          </span>
+
+        </div>
+
+      </div>
+
+      <p class="about-text">
+
+        Kolhapur's premier festival & club DJ
+        specializing in heavy Dhol Tasha beats,
+        Trance fusion, and customized Mandal
+        anthems that power the city's biggest events.
+
+      </p>
+
+    </section>
+
+
+    <!-- ==============================
+         SOCIAL
+         ============================== -->
+
+    <section
+      id="social-section"
+      class="card-glass section-spacing reveal-section"
+    >
+
+      <h4 class="card-header">
+        Connect With Me
+      </h4>
+
+      <div class="social-container">
+
+
+        <a
+          href="https://www.instagram.com/deejay_sourabh_.4"
+          target="_blank"
+          rel="noopener"
+          class="social-card"
+        >
+
+          <div class="social-badge">
+            <i class="fa-brands fa-instagram"></i>
+          </div>
+
+          <div class="social-info">
+
+            <span class="social-platform">
+              Instagram
+            </span>
+
+            <span class="social-handle">
+              @deejay_sourabh_.4
+            </span>
+
+          </div>
+
+          <div class="social-arrow">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </div>
+
+        </a>
+
+
+        <a
+          href="https://youtube.com/@deejaysourabhkolhapur4"
+          target="_blank"
+          rel="noopener"
+          class="social-card"
+        >
+
+          <div class="social-badge">
+            <i class="fa-brands fa-youtube"></i>
+          </div>
+
+          <div class="social-info">
+
+            <span class="social-platform">
+              YouTube
+            </span>
+
+            <span class="social-handle">
+              @deejaysourabhkolhapur4
+            </span>
+
+          </div>
+
+          <div class="social-arrow">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </div>
+
+        </a>
+
+
+        <a
+          href="https://wa.me/917058186034"
+          target="_blank"
+          rel="noopener"
+          class="social-card"
+        >
+
+          <div class="social-badge">
+            <i class="fa-brands fa-whatsapp"></i>
+          </div>
+
+          <div class="social-info">
+
+            <span class="social-platform">
+              WhatsApp
+            </span>
+
+            <span class="social-handle">
+              +91 7058186034
+            </span>
+
+          </div>
+
+          <div class="social-arrow">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </div>
+
+        </a>
+
+
+        <a
+          href="https://facebook.com"
+          target="_blank"
+          rel="noopener"
+          class="social-card"
+        >
+
+          <div class="social-badge">
+            <i class="fa-brands fa-facebook-f"></i>
+          </div>
+
+          <div class="social-info">
+
+            <span class="social-platform">
+              Facebook
+            </span>
+
+            <span class="social-handle">
+              DJ Sourabh Kolhapur
+            </span>
+
+          </div>
+
+          <div class="social-arrow">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </div>
+
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ==============================
+       AUDIO PLAYER
+       ============================== -->
+
+  <!-- ==============================
+     PROFESSIONAL AUDIO PLAYER
+     ============================== -->
+
+<div id="player-bar" class="player-bar hidden">
+
+  <div class="player-inner">
+
+    <!-- SONG INFO -->
+
+    <div class="player-song-info">
+
+      <div class="player-artwork">
+        <span>🎵</span>
+      </div>
+
+      <div class="player-track-details">
+
+        <span class="now-playing-label">
+          NOW PLAYING
+        </span>
+
+        <strong id="playing-title">
+          Playing Track
+        </strong>
+
+        <span id="player-status">
+          DJ Sourabh Kolhapur
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- CENTER CONTROLS -->
+
+    <div class="player-main">
+
+      <div class="player-controls">
+
+        <button
+          type="button"
+          id="player-prev"
+          class="player-control"
+          aria-label="Previous song"
+        >
+          <i class="fa-solid fa-backward-step"></i>
+        </button>
+
+        <button
+          type="button"
+          id="player-play"
+          class="player-play"
+          aria-label="Play or pause"
+        >
+          <i class="fa-solid fa-play"></i>
+        </button>
+
+        <button
+          type="button"
+          id="player-next"
+          class="player-control"
+          aria-label="Next song"
+        >
+          <i class="fa-solid fa-forward-step"></i>
+        </button>
+
+      </div>
+
+
+      <!-- PROGRESS -->
+
+      <div class="player-progress-area">
+
+        <span id="player-current-time">
+          0:00
+        </span>
+
+        <input
+          type="range"
+          id="player-progress"
+          min="0"
+          max="100"
+          value="0"
+          step="0.1"
+          aria-label="Song progress"
+        >
+
+        <span id="player-duration">
+          0:00
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- VOLUME -->
+
+    <div class="player-volume">
+
+      <i
+        id="volume-icon"
+        class="fa-solid fa-volume-high"
+      ></i>
+
+      <input
+        type="range"
+        id="player-volume"
+        min="0"
+        max="1"
+        value="1"
+        step="0.01"
+        aria-label="Volume"
+      >
+
+    </div>
+
+  </div>
+
+  <!-- REAL AUDIO ELEMENT -->
+
+  <audio
+    id="audio-element"
+    preload="metadata"
+  ></audio>
+
+</div>
+
+  <!-- ==============================
+       BOOKING MODAL
+       ============================== -->
+
+  <div
+    id="booking-modal"
+    class="modal hidden"
+  >
+
+    <div class="modal-content">
+
+      <span
+        id="close-modal"
+        class="close-btn"
+      >
+        &times;
+      </span>
+
+      <h3>
+        Book Mandal Song
+      </h3>
+
+      <form id="booking-form">
+
+        <input
+          type="text"
+          id="mandal-name"
+          placeholder="Mandal / Festival Name"
+          required
+        >
+
+        <input
+          type="text"
+          id="client-name"
+          placeholder="Your Name"
+          required
+        >
+
+        <input
+          type="tel"
+          id="client-phone"
+          placeholder="Contact Number"
+          required
+        >
+
+        <textarea
+          id="song-details"
+          placeholder="Describe song requirements (optional)"
+        ></textarea>
+
+        <button
+          type="submit"
+          class="btn-book"
+        >
+          Submit Booking
+        </button>
+
+      </form>
+
+      <div id="booking-status"></div>
+
+    </div>
+
+  </div>
+
+
+  <script src="app.js?v=1001"></script>
+
+
+  <!-- ==============================
+       SCROLL REVEAL
+       ============================== -->
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const sections = document.querySelectorAll(".reveal-section");
+
+      if (!("IntersectionObserver" in window)) {
+
+        sections.forEach(function (section) {
+          section.classList.add("visible");
+        });
+
+        return;
+      }
+
+      const observer = new IntersectionObserver(
+        function (entries) {
+
+          entries.forEach(function (entry) {
+
+            if (entry.isIntersecting) {
+
+              entry.target.classList.add("visible");
+
+              observer.unobserve(entry.target);
+
+            }
+
+          });
+
+        },
+        {
+          threshold: 0.15
+        }
+      );
+
+      sections.forEach(function (section) {
+        observer.observe(section);
+      });
+
+    });
+
+  </script>
+
+</body>
+
+</html>
