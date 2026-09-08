@@ -196,9 +196,18 @@
 
     <script>
 
-        // ===============================
+
+        // =====================================
+        // RENDER BACKEND
+        // =====================================
+
+        const API_BASE =
+            "https://dj-website-backend.onrender.com";
+
+
+        // =====================================
         // ADMIN LOGIN
-        // ===============================
+        // =====================================
 
         async function login() {
 
@@ -240,14 +249,16 @@
 
                 const response =
                     await fetch(
-                        "/api/admin/login",
+                        API_BASE + "/api/admin/login",
                         {
 
                             method: "POST",
 
                             headers: {
+
                                 "Content-Type":
                                     "application/json"
+
                             },
 
                             body: JSON.stringify({
@@ -270,14 +281,12 @@
 
                 if (response.ok && data.success) {
 
-                    // Save the SERVER authentication token
                     localStorage.setItem(
                         "dj_admin_token",
                         data.token
                     );
 
 
-                    // Remove old authentication method
                     localStorage.removeItem(
                         "dj_admin_logged_in"
                     );
@@ -324,9 +333,9 @@
         }
 
 
-        // ===============================
+        // =====================================
         // ENTER KEY LOGIN
-        // ===============================
+        // =====================================
 
         document
             .getElementById("username")
@@ -360,9 +369,9 @@
             );
 
 
-        // ===============================
+        // =====================================
         // CLEAR OLD LOGIN FLAG
-        // ===============================
+        // =====================================
 
         localStorage.removeItem(
             "dj_admin_logged_in"
